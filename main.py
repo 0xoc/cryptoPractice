@@ -30,9 +30,6 @@ for m1 in messages:
                 if_m1_is_c_key = ord(c) ^ m1[i]
                 if_m1_is_space_key = space ^ m1[i]
 
-                if i == 34:
-                    print(if_m1_is_c_key, if_m1_is_space_key)
-
                 if i not in m1_info.keys():
                     m1_info[i] = [if_m1_is_c_key, if_m1_is_space_key]
                 else:
@@ -43,7 +40,7 @@ for m1 in messages:
 decoded_key = {}
 max_length = 0
 
-for i in range(85):
+for i in range(300):
     common = []
     for _m_info in m_info:
         keys = _m_info.get(i)
@@ -52,8 +49,26 @@ for i in range(85):
                 common = keys
             else:
                 common = list(set(common) & set(keys))
-    if len(common) > 1:
-        print(common, i)
+
+    if i == 14:
+        common = [common[1]]
+    elif i == 21:
+        common = [127]
+    elif i == 30:
+        common = [common[2]]
+    elif i == 33:
+        common = [common[3]]
+    elif i == 34:
+        common = [51]
+    elif i == 35:
+        common = [common[3]]
+    elif i == 36:
+        common = [common[0]]
+    elif i == 49:
+        common = [99]
+    elif i == 42:
+        common = [common[1]]
+
     if len(common) > max_length:
         max_length = len(common)
     decoded_key[i] = common
@@ -61,7 +76,6 @@ for i in range(85):
 target = "32510ba9babebbbefd001547a810e67149caee11d945cd7fc81a05e9f85aac650e9052ba6a8cd8257bf14d13e6f0a803b54fde9e77472dbff89d71b57bddef121336cb85ccb8f3315f4b52e301d16e9f52f904"
 target_array = []
 
-print(max_length)
 
 for i in range(0, len(target) - 1, 2):
     target_array.append(int(target[i] + target[i + 1], 16))
@@ -72,22 +86,11 @@ for i in range(len(target_array)):
     key = decoded_key.get(i, None)
     c = target_array[i]
     if not key:
-        result += '*[%d]' % i
+        result += '*[%d](%d)' % (i, c)
     else:
         key = list(key)
-        if i == 14:
-            result += chr(key[1] ^ c)
-        elif i == 30:
-            result += chr(key[2] ^ c)
-        elif i == 33:
-            result += chr(key[3] ^ c)
-        elif i == 35:
-            result += chr(key[3] ^ c)
-        elif i == 36:
-            result += chr(key[0] ^ c)
-        elif i == 42:
-            result += chr(key[1] ^ c)
-        else:
-            result += chr(key[0] ^ c)
+        result += chr(key[0] ^ c)
 
 print(result)
+print("34: ", ord('u')^70)
+print("49: ", ord('s')^16)
